@@ -4,24 +4,10 @@ import java.awt.event.*;
 import java.util.List;
 import java.util.Random;
 
-/**
- * ============================================================
- *  STEP 5: FutoshikiGUI.java - the face of the game
- * ============================================================
- * Everything hard (puzzle generation, validity, uniqueness) was
- * already solved in PuzzleGenerator. This class only:
- *   - shows the board, the signs, and the buttons
- *   - forwards the player's moves to the brain
- *   - manages lives and game state
- *
- * NOTE: adapted to the team split - the brain now lives in
- *   Puzzle (Siya), BoardFactory (Siya), Validator (Jack),
- *   SolutionCounter (Lisa), PuzzleGenerator orchestrator (Karabo).
- *   Only 5 call references changed; all game logic is untouched.
- */
+
 public class FutoshikiGUI extends JFrame {
 
-    // ---- 5.1 Fields -------------------------------------------
+
 
     // Current puzzle data (copied from the generator)
     private int[][] board;                    // what the player sees (0 = empty)
@@ -171,14 +157,9 @@ public class FutoshikiGUI extends JFrame {
         addKeyListener(keyHandler);   // frame level too
     }
 
-    // ---- 5.4 Custom BoardPanel ---------------------------------
+    // Custom BoardPanel 
 
-    /**
-     * The board is a panel with 16 buttons (the cells) and the
-     * inequality signs painted straight onto the background.
-     * Painting (instead of labels) means signs never sit ON TOP of
-     * anything, so clicks always reach the cells.
-     */
+
     private class BoardPanel extends JPanel {
         private static final int MARGIN = 12;
         private int cell = 76;                 // cell size for the CURRENT game
@@ -210,14 +191,11 @@ public class FutoshikiGUI extends JFrame {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g;
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             if (inequalities == null) return;
 
             // Draw every sign as a solid triangle in the gap between its
-            // two cells. The POINT always faces the SMALLER number (same
-            // convention as the tip of '<'), so vertical and diagonal
-            // signs read as clearly as horizontal ones.
+           
             g2.setColor(new Color(0x444444));
             final int S = Math.min(9, gap / 3);   // scale signs to the gap
             for (Inequality ineq : inequalities) {
@@ -305,7 +283,7 @@ public class FutoshikiGUI extends JFrame {
         numberRow.repaint();
     }
 
-    // ---- 5.5 newGame() ------------------------------------------
+    // newGame() 
 
     private void newGame() {
         lives = maxLives;
@@ -345,7 +323,7 @@ public class FutoshikiGUI extends JFrame {
         say(msg);
     }
 
-    // ---- 5.6 renderBoard() ---------------------------------------
+    //renderBoard()
 
     private void renderBoard() {
         for (int r = 0; r < n; r++) {
@@ -369,7 +347,7 @@ public class FutoshikiGUI extends JFrame {
         }
     }
 
-    // ---- 5.7 selectCell(r, c) -------------------------------------
+    //selectCell(r, c)
 
     private void selectCell(int r, int c) {
         if (gameOver || givens[r][c]) return;   // ignore: finished or given
@@ -397,7 +375,7 @@ public class FutoshikiGUI extends JFrame {
         // hit the edge without finding an editable cell -> stay put
     }
 
-    // ---- 5.8 placeNumber(num) - the heart of the game ------------
+    // placeNumber(num)
 
     private void placeNumber(int num) {
         if (gameOver) return;
@@ -447,9 +425,9 @@ public class FutoshikiGUI extends JFrame {
         renderBoard();
     }
 
-    // ---- 5.9 Helper methods ---------------------------------------
+    // Helper methods 
 
-    /** True only when EVERY cell matches the hidden solution. */
+    /* True only when EVERY cell matches the hidden solution. */
     private boolean isSolved() {
         for (int r = 0; r < n; r++)
             for (int c = 0; c < n; c++)
@@ -466,7 +444,7 @@ public class FutoshikiGUI extends JFrame {
         }
     }
 
-    /** Count how many of the player's numbers disagree with the solution. */
+    /*Count how many of the player's numbers disagree with the solution. */
     private void checkBoard() {
         if (gameOver) return;
         int wrong = 0, filled = 0;
@@ -505,7 +483,7 @@ public class FutoshikiGUI extends JFrame {
         checkWin();
     }
 
-    /** Wipe every non-given cell back to empty. */
+    /* Wipe every non-given cell back to empty. */
     private void resetBoard() {
         if (gameOver) return;
         for (int r = 0; r < n; r++)
@@ -533,6 +511,10 @@ public class FutoshikiGUI extends JFrame {
         statusLabel.setText("<html><div style='text-align:center;'>"
                 + msg + "</html>");
     }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///Add  these later
 
     // ---- Rejection diagnostics ------------------------------------
 
@@ -577,6 +559,10 @@ public class FutoshikiGUI extends JFrame {
         }
         return "it breaks a rule";   // should never be reached
     }
+
+
+
+
 
     // ---- Personality: the sarcastic mode writers' room ------------
     //
