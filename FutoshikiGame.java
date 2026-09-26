@@ -21,15 +21,9 @@ public class FutoshikiGame extends JFrame {
     // SOURCE: LifeManager.java (repo). Call sites still BLANK in submitBoard.
     private LifeManager lives = new LifeManager(3);
 
-<<<<<<< HEAD
-    // Generator wiring (SOURCE: PuzzleGenerator.java - now in the repo)
-    private final PuzzleGenerator generator = new PuzzleGenerator();
-    private PuzzleGenerator.Puzzle currentPuzzle;
-=======
     // Generator wiring (SOURCE: PuzzleGenerator.java + team split - now in the repo)
     private final PuzzleGenerator generator = new PuzzleGenerator();
     private Puzzle currentPuzzle;
->>>>>>> 6c8543fac4042f77eac03c298de69b528a2a9a1f
     private String difficulty = "Easy";
 
     // UI controls, created in createUI()
@@ -250,11 +244,7 @@ public class FutoshikiGame extends JFrame {
         // equal values (1 and 1) can never satisfy a strict sign
         total++; if (!new Inequality(0, 0, 3, 1, '<').isSatisfied(b)) pass++;
         // an empty side cannot violate yet -> treated as satisfied
-<<<<<<< HEAD
-        int[][] b2 = PuzzleGenerator.deepCopy(b);
-=======
         int[][] b2 = BoardFactory.deepCopy(b);
->>>>>>> 6c8543fac4042f77eac03c298de69b528a2a9a1f
         b2[0][0] = 0;
         total++; if (new Inequality(0, 0, 0, 1, '<').isSatisfied(b2)) pass++;
         // diagonal signs are checked the same way once both cells hold values
@@ -310,11 +300,7 @@ public class FutoshikiGame extends JFrame {
 
         // The puzzle comes from the generator (the whole generator chain runs here)
         currentPuzzle = generator.generate(difficulty, newSize);
-<<<<<<< HEAD
-        board = PuzzleGenerator.deepCopy(currentPuzzle.puzzle);
-=======
         board = BoardFactory.deepCopy(currentPuzzle.puzzle);
->>>>>>> 6c8543fac4042f77eac03c298de69b528a2a9a1f
         constraints = currentPuzzle.inequalities;
 
         secondsElapsed = 0;
