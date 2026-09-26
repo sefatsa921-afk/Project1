@@ -71,7 +71,34 @@ public class FutoshikiGame extends JFrame {
     // Checks whether the entire board is correctly filled
     private boolean checkWinCondition() {
         // Jack: iterate grid and verify all values
-        return false;
+        int n = size;
+        // 1: checking if the entire board is filled
+        for (int r = 0; r < n; r++) {
+            for (int c = 0; c < n; c++) {
+                if (board[r][c] == 0) { // 0 = empty cell
+                    return false;
+                }
+            }
+        }
+        // 2: checking for duplicates
+        for (int i = 0; i < n; i++) {
+            boolean[] rowHas = new boolean[n + 1];
+            boolean[] colHas = new boolean[n + 1];
+            for (int k = 0; k < n; k++) {
+                if (rowHas[board[i][k]] || colHas[board[k][i]]) {
+                    return false;
+                }
+                rowHas[board[i][k]] = true;
+                colHas[board[k][i]] = true;
+            }
+        }
+        // 3: verifying the constraints
+        for (Inequality ineq : constraints) {
+            if (!ineq.isSatisfied(board)) {
+                return false;
+            }
+        }
+        return true; // all checks passed
     }
 
     // SOLVER & HINT ENGINE (Lisa)
@@ -79,12 +106,60 @@ public class FutoshikiGame extends JFrame {
     // Backtracking algorithm to solve the board recursively
     private boolean solve(Cell[][] b, int r, int c) {
         // Lisa: recursive placement and backtracking logic
-        return false;
+        if (r == size) return true;                   
+        if (c == size) return solve(b, r + 1, 0);     
+        if (b[r][c] != 0) return solve(b, r, c + 1);  
+
+        // Try candidate values 1 through size
+        for (int val = 1; val <= size; val++) {
+            if (isValidMove(b, r, c, val)) {          
+                b[r][c] = val;                        
+                if (solve(b, r, c + 1)) return true;  
+                b[r][c] = 0;                          
+            }
+        }
+        return false; // trigger backtracking step in parent recursive call
     }
 
     // Solves a copy of the board to give an ODD/EVEN clue to the player
     private void giveHint() {
         // Lisa: check points, solve temp board, and display clue dialog
+        if (playerPoints < 20) {
+            JOptionPane.showMessageDialog(this, "Not enough points for a hint!");
+            return;
+        }
+
+        // Independent copy of the board, preserving EVERY value the player
+        // has already placed, so the solver builds on their progress.
+        int[][] temp = new int[size][size];
+        for (int r = 0; r < size; r++) {
+            for (int c = 0; c < size; c++) {
+                temp[r][c] = board[r][c];
+            }
+        }
+
+        // Run solver engine on the copied grid
+        if (!solve(temp, 0, 0)) {
+            JOptionPane.showMessageDialog(this, "No valid solution possible from your current board! Check for mistakes.");
+            return;
+        }
+
+        // Search for first empty cell and reveal parity clue (ODD/EVEN)
+        for (int r = 0; r < size; r++) {
+            for (int c = 0; c < size; c++) {
+                if (board[r][c] == 0) {
+                    int correctVal = temp[r][c];      // the solved correct digit
+                    String parity = (correctVal % 2 == 0) ? "EVEN" : "ODD";
+
+                    playerPoints -= 20;               // deduct point cost
+                    scoreLabel.setText("Points: " + playerPoints);
+
+                    JOptionPane.showMessageDialog(this, "HINT: Cell at Row " + (r + 1) +
+                            ", Col " + (c + 1) + " is an " + parity + " number!");
+                    return;
+                }
+            }
+        }
     }
 
     // UNIT TESTING & QA (Zwivhuya(me))
